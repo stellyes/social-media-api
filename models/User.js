@@ -5,7 +5,17 @@ const likeSchema = require("./Like");
 
 const userSchema = new Schema(
     {
-        username: {
+        fullname: {
+            type: String,
+            required: true,
+            max_length: 64
+        },
+        first: {
+            type: String,
+            required: true,
+            max_length: 31
+        },
+        last: {
             type: String,
             required: true,
             max_length: 32
