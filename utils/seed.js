@@ -28,7 +28,7 @@ connection.once('open', async () => {
         await connection.db.dropCollection("friends");
     }
 
-    // insert user and thought data
+    // insert user and thought data for initial 
     await User.collection.insertMany(users);
     await Thought.collection.insertMany(thoughts);
 
@@ -46,8 +46,8 @@ connection.once('open', async () => {
 
         // If friend pairing already exists inversely, reassign to new 
         for (const friend of friendList) {
-            if ( friend == { er: randomFriended, ed: randomFriender }) {
-                while ( friend == { er: randomFriended, ed: randomFriender }) {
+            if ( friend == { friender: randomFriended._id, friended: randomFriender._id }) {
+                while ( friend == { friender: randomFriended._id, friended: randomFriender._id }) {
                     randomFriended = Math.floor(Math.random() * userData.length);
                 }
                 // Once match is found and given reassigned value, exit loop
@@ -57,8 +57,8 @@ connection.once('open', async () => {
 
         // Add friend to friendList
         friendList.push({
-            er: randomFriender,
-            ed: randomFriended
+            friender: randomFriender._id,
+            friended: randomFriended._id
         })
     }
 
@@ -66,10 +66,32 @@ connection.once('open', async () => {
     await Friend.collection.insertMany(friendList);
 
     // Create likes
-    let thoughtList = await connection.db.listCollections({ name: "thoughts" }).toArray();
+    let likeList = [];
+    let thoughtData = await connection.db.listCollections({ name: "thoughts" }).toArray();
     for (let i = 0; i < 50; i++) {
         const randomUser = userData[Math.floor(Math.random() * userData.length)];
-        
+        const randomThought = thoughtData[Math.floor(Math.random() * thoughtData.length)];
+
+        // ensure like doesn't already exist in thoughtList and redefine if
+        // equivalency condition is met
+        for (const like of likeList) {
+            if (like == { thought: randomThought._id, user: randomUser._id }) {
+                while (like == { thought: randomThought._id, user: randomUser._id }){
+                    randomUser = userData[Math.floor(Math.random() * userData.length)];
+                }
+                // after match is found and reassigned, break d
+                break;
+            }
+        }
+
+        // Add like to likeList
+        likeList.push({
+            thought: randomThought._id,
+            user: randomUser._id
+        });
     }
+
+    // Add likes to collection
+    await Like.collection.insertMany(likeList);
 
 });
