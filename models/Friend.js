@@ -9,11 +9,11 @@ const friendSchema = new Schema(
         friended: {
             type: Schema.Types.ObjectId,
             ref: 'User',
-        }
-    },
-    {
-        toJSON: {
-            virtuals: true
+        },
+        accepted: {
+            type: Boolean,
+            required: true,
+            default: false
         }
     }
 );

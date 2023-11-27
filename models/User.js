@@ -8,38 +8,48 @@ const userSchema = new Schema(
         fullname: {
             type: String,
             required: true,
-            max_length: 64
+            maxlength: 64
         },
         first: {
             type: String,
             required: true,
-            max_length: 31
+            maxlength: 31
         },
         last: {
             type: String,
             required: true,
-            max_length: 32
+            maxlength: 32
         },
         email: {
             type: String,
             required: true,
-            min_length: 6,
-            max_length: 64
+            minlength: 6,
+            maxlength: 64
         },
         password: {
             type: String,
             required: true,
-            min_length: 8,
-            max_length: 64
+            minlength: 8,
+            maxlength: 64
         },
-        friends: [friendSchema],
-        thoughts: [thoughtSchema],
-        likes: [likeSchema],
-    },
-    {
-        toJSON: {
-            virtuals: true
-        }
+        friends: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+            }
+        ],
+        thoughts: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Thought',
+            }
+        ],
+        likes: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Like'
+            }
+        ],
     }
 );
 

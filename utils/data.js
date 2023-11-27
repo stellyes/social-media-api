@@ -96,7 +96,8 @@ const thoughts = [
     },
     {
       "post": "Positive vibes only! Spread kindness. ❤️ #PositiveThinking",
-      "user": "John Doe"
+      "user": "John Doe",
+      "likes": [],
     },
     {
       "post": "Sunday brunch with friends. Good times! 🥞🍹",
