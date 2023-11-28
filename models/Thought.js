@@ -3,12 +3,13 @@ const { Schema, model } = require("mongoose");
 const thoughtSchema = new Schema(
     {
         post: {
-            type: Text,
+            type: String,
             required: true,
         },
         user: {
             type: Schema.Types.ObjectId,
             ref: 'User',
+            required: true
         },
         likes: [
             {
@@ -16,11 +17,6 @@ const thoughtSchema = new Schema(
                 ref: 'Like',
             }
         ],
-    },
-    {
-        toJSON: {
-            virtuals: true
-        }
     }
 );
 
