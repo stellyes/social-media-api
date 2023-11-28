@@ -31,12 +31,18 @@ connection.once('open', async () => {
     // insert user and thought data for initial 
     await User.collection.insertMany(users);
     console.log("Users added to colllection")
+
+    let userData = await User.find();
+    for (const thought of thoughts) {
+        thought.user = userData[Math.floor(Math.random() * userData.length)]._id;
+    }
+
     await Thought.collection.insertMany(thoughts);
     console.log("Thoughts added to collection")
 
     // create friend associations now that users have been created
     let friendList = [];
-    let userData = await User.find();
+    userData = await User.find();
     for (let i = 0; i < 10; i++) {
         let randomFriender = userData[Math.floor(Math.random() * userData.length)];
         let randomFriended = userData[Math.floor(Math.random() * userData.length)];
@@ -105,50 +111,38 @@ connection.once('open', async () => {
                 thought.likes.push(like._id);
             }
         }
-        updatedThoughts.push(thought);
-    }
 
-    // With new thought likes added, update existing thoughts in collection
-    let thoughtUpdate = await Thought.collection.updateMany({}, updatedThoughts);
-    if (thoughtUpdate.modifiedCount != updatedThoughts.length) {
-        console.log("Failed to link likes to corresponding thoughts");
-    } else {
-        console.log("Successfully linked likes to corresponding thoughts")
+        // update user data 
+        let result = await Thought.collection.updateOne({ _id: thought._id }, thought);
+        updatedThoughts.push(result.acknowledged);
     }
 
     const updatedUsers = [];
     for (const user of userData) {
         // Add likes to corresponding users
         for (const like of likeList) {
-            if (like.user == user._id) {
+            if (like.user.toString() == user._id.toString()) {
                 user.likes.push(like._id);
             }
         }
 
         // Add thoughts to corresponding users
         for (const thought of thoughtData) {
-            if (thought.user == user._id) {
+            if (thought.user.toString() == user._id.toString()) {
                 user.thoughts.push(thought._id);
             }
         }
 
         // Add friends to corresponding users
         for (const friend of friendList) {
-            if (friend.friender == user._id ||
-                friend.friended == user._id) {
+            if (friend.friender.toString() == user._id.toString() ||
+                friend.friended.toString() == user._id.toString()) {
                     user.friends.push(friend._id);
             }
         }
 
-        updatedUsers.push(user);
-    }
-
-    // With new user data added, update existing users in collection
-    let userUpdate = await USER.collection.updateMany({}, updatedUsers);
-    if (userUpdate.modifiedCount != updatedUsers.length) {
-        console.log("Failed to link users to corresponding friends");
-    } else {
-        console.log("Successfully linked users to corresponding friends")
+        let result = await User.collection.updateOne({ _id: user._id }, user);
+        updatedUsers.push(result.acknowledged);
     }
 
     // Terminate seeding 
