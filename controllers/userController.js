@@ -44,13 +44,23 @@ module.exports =  {
           return res.status(404).json({ message: 'Error: No user with the associated user ID' });
         }
   
-        // Remove any associated friend connections, thoughts, and likes 
+        // Remove any associated likes 
         await Like.deleteMany({ user: { $in: user._id } });
+
+        // Remove likes on thoughts authored by user
+        const likesOnThoughts = await Thought.find({ _id: user._id })
+        for (const like of likesOnThoughts) {
+          await Like.deleteOne({ _id: like._id });
+        }
+
+        // Remove any associated thoughts
         await Thought.deleteMany({ user: { $in: user._id } });
+
+        // Remove any friend associations
         await Friend.deleteMany({ friender: { $in: user._id } });
         await Friend.deleteMany({ friended: { $in: user._id } });
 
-        res.json({ message: 'Course and students deleted!' });
+        res.json({ message: "User successfully deleted" });
       } catch (err) {
         res.status(500).json(err);
       }
