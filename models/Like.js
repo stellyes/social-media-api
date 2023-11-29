@@ -5,10 +5,12 @@ const likeSchema = new Schema(
         thought: {
             type: Schema.Types.ObjectId,
             ref: 'Thought',
+            require: true
         },
         user: {
             type: Schema.Types.ObjectId,
             ref: 'User',
+            require: true
         }
     }
 );
