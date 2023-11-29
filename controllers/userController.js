@@ -5,7 +5,7 @@ module.exports =  {
   async getUsers(req, res) {
       try {
           const users = await User.find();
-          res.json(users);
+          res.status(200).json(users);
       } catch(err) {
           res.status(500).json(err);
       }
@@ -60,7 +60,7 @@ module.exports =  {
         await Friend.deleteMany({ friender: { $in: user._id } });
         await Friend.deleteMany({ friended: { $in: user._id } });
 
-        res.json({ message: "User successfully deleted" });
+        res.status(200).json({ message: "User successfully deleted" });
       } catch (err) {
         res.status(500).json(err);
       }

@@ -1,12 +1,11 @@
 const { Like, User, Thought } = require("../models");
 
 module.exports = {
-
     // Get all likes
     async getLikes(req, res)  {
         try {
             const likes = await Like.find();
-            res.json(likes);
+            res.status(200).json(likes);
         } catch(err) {
             res.status(500).json(err);
         }
@@ -58,7 +57,7 @@ module.exports = {
             tempLikes.push(tempLike);
         }
 
-        // Add new likeList to user and update
+        // Add new likeList to thought and update
         tempThought.likes = tempLikes;
         await Thought.updateOne({ _id: like.thought }, tempThought);
 
@@ -70,10 +69,11 @@ module.exports = {
             tempLikes.push(tempLike);
         }
 
+        // Add new likeList to user and update
         tempUser.likes = tempLikes;
         await User.updateOne({ _id: like.user }, tempUser);
 
-        res.json({ message: 'Like successfully deleted' });
+        res.status(200).json({ message: 'Like successfully deleted' });
         } catch(err) {
         res.status(500).json(err);
         }

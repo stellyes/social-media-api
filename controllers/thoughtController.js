@@ -5,7 +5,7 @@ module.exports = {
     async getThoughts (req, res)  {
         try {
             const thoughts = await Thought.find();
-            res.json(thoughts);
+            res.status(200).json(thoughts);
         } catch(err) {
             res.status(500).json(err);
         }
@@ -65,7 +65,7 @@ module.exports = {
             tempUser.likes = userLikes;
             await User.updateOne({ _id: tempUser._id }, tempUser);
         }
-        res.json({ message: 'Thought successfully deleted' });
+        res.status(200).json({ message: 'Thought successfully deleted' });
         } catch (err) {
         res.status(500).json(err);
         }
