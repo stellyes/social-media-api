@@ -5,14 +5,15 @@ const friendSchema = new Schema(
         friender: {
             type: Schema.Types.ObjectId,
             ref: 'User',
+            required: true
         },
         friended: {
             type: Schema.Types.ObjectId,
             ref: 'User',
+            required: true
         },
         accepted: {
             type: Boolean,
-            required: true,
             default: false
         }
     }

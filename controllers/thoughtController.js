@@ -35,6 +35,20 @@ module.exports = {
             return res.status(500).json(err);
         }
     },
+    // Update existing thought
+    async updateThought(req, res) {
+        try {
+          const thought = await Thought.updateOne({ _id: req.params._id }, { $set: req.body });
+  
+          if (!thought) {
+            return res.status(404).json({ message: "Error: No thought associated with the provided id" });
+          }
+  
+          res.status(200).json(thought);
+        } catch(err) {
+          return res.status(500).json(err);
+        }
+    },
     // Delete thought
     async deleteThought(req, res) {
         try {

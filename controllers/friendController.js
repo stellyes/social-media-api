@@ -53,7 +53,7 @@ module.exports = {
         }
     },
     // Delete friend 
-    async deleteLike(req, res) {
+    async deleteFriend(req, res) {
         try {
         const friend = await Friend.findOneAndDelete({ _id: req.params._id });
 
@@ -74,7 +74,7 @@ module.exports = {
         }
         // Set friends list to updated list
         friender.friends = tempFriends;
-        await User.updateOne({ _id: friender._id }, friender);
+        await User.updateOne({ _id: friender._id }, { $set: { friends: friender.friends } });
 
         const friended = await User.findOne({ _id: friend.friended });
         tempFriends = [];
@@ -84,8 +84,8 @@ module.exports = {
             }
             tempFriends.push(tempFriend);
         }
-        friender.friends = tempFriends;
-        await User.updateOne({ _id: friender._id }, friender);
+        friended.friends = tempFriends;
+        await User.updateOne({ _id: friended._id }, { $set: { friends: friended.friends } });
        
         res.status(200).json({ message: 'Friend successfully deleted' });
         } catch(err) {

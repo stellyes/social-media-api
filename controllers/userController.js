@@ -11,7 +11,7 @@ module.exports =  {
       }
   },
   // Get specific user by ID
-  async getUniqueUser(req, res) {
+  async getUser(req, res) {
       try {
           const user = await User.findOne({
               _id: req.params.user
@@ -30,6 +30,20 @@ module.exports =  {
   async createUser(req, res) {
       try {
         const user = await User.create(req.body);
+        res.status(200).json(user);
+      } catch(err) {
+        return res.status(500).json(err);
+      }
+    },
+    // Update existing user
+    async updateUser(req, res) {
+      try {
+        const user = await User.updateOne({ _id: req.params._id }, { $set: req.body });
+
+        if (!user) {
+          return res.status(404).json({ message: "Error: No user associated with the provided id" });
+        }
+
         res.status(200).json(user);
       } catch(err) {
         return res.status(500).json(err);
