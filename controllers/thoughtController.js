@@ -26,7 +26,7 @@ module.exports = {
             res.status(500).json(err);
         }
     },
-    // Create new user
+    // Create new thought
     async createThought(req, res) {
         try {
             const thought = await Thought.create(req.body);
@@ -35,7 +35,7 @@ module.exports = {
             return res.status(500).json(err);
         }
     },
-    // Delete user
+    // Delete thought
     async deleteThought(req, res) {
         try {
         const thought = await Thought.findOneAndDelete({ _id: req.params._id });
@@ -70,4 +70,4 @@ module.exports = {
         res.status(500).json(err);
         }
     }
-}
+};
