@@ -1,4 +1,4 @@
-const { Friend, Like, Thought, User } = require('../models');
+const { Thought, User } = require('../models');
 
 module.exports =  {
   // Get ALL users
@@ -14,7 +14,7 @@ module.exports =  {
   async getUser(req, res) {
       try {
           const user = await User.findOne({
-              _id: req.params.user
+              _id: req.params._id
           }).select("-__v");
 
           if (!user)  {
@@ -57,25 +57,51 @@ module.exports =  {
         if (!user) {
           return res.status(404).json({ message: 'Error: No user with the associated user ID' });
         }
-  
-        // Remove any associated likes 
-        await Like.deleteMany({ user: { $in: user._id } });
 
-        // Remove likes on thoughts authored by user
-        const likesOnThoughts = await Thought.find({ _id: user._id })
-        for (const like of likesOnThoughts) {
-          await Like.deleteOne({ _id: like._id });
-        }
-
-        // Remove any associated thoughts
-        await Thought.deleteMany({ user: { $in: user._id } });
-
-        // Remove any friend associations
-        await Friend.deleteMany({ friender: { $in: user._id } });
-        await Friend.deleteMany({ friended: { $in: user._id } });
+        // Delete associated thoughts 
+        const thoughts = await Thought.find({ username: user.username });
+        thoughts.forEach(thought => {
+          Thought.deleteMany({ _id: thought._id })
+        })
 
         res.status(200).json({ message: "User successfully deleted" });
       } catch (err) {
+        res.status(500).json(err);
+      }
+    },
+    async addFriend(req, res) {
+      try {
+        const user = await User.findOne({ _id: req.params.userId });
+
+        if (!user) {
+          return res.status(404).json({ message: 'Error: No user/friend with the associated user/friend ID' });
+        }
+
+        // Append friendId to friend list and update user 
+        user.friends.push(req.params.friendId)
+        await User.updateOne({ _id: user._id }, user)
+
+        res.status(200).json(user);
+      } catch(err) {
+        res.status(500).json(err);
+      }
+    },
+    async removeFriend(req, res) {
+      try {
+        const user = await User.findOne({ _id: req.params.userId });
+
+        if (!user) {
+          return res.status(404).json({ message: 'Error: No user/friend with the associated user/friend ID' });
+        }
+
+        user.friends = user.friends.filter(function(friend) {
+          // Return everything that's not equal to friendId
+          return friend._id.toString() !== req.params.friendId
+        })
+        await User.updateOne({ _id: user._id }, user)
+
+        res.status(200).json(user);
+      } catch(err) {
         res.status(500).json(err);
       }
     }

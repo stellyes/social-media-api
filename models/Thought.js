@@ -1,22 +1,24 @@
 const { Schema, model } = require("mongoose");
+const reactionSchema = require("./Reaction");
 
 const thoughtSchema = new Schema(
     {
-        post: {
+        thoughtText: {
             type: String,
             required: true,
+            minlength: 1,
+            maxlength: 280
         },
-        user: {
-            type: Schema.Types.ObjectId,
+        createdAt: {
+            type: Date,
+            default: Date.now(),   
+        },
+        username: {
+            type: String,
             ref: 'User',
             required: true
         },
-        likes: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'Like',
-            }
-        ],
+        reactions: [reactionSchema]
     }
 );
 
